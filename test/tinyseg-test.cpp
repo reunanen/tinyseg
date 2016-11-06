@@ -143,7 +143,7 @@ void test()
 
         cv::imwrite(output_filename.str(), result);
 
-        std::cout << " " << test_image << std::endl;
+        std::cout << " " << test_image;
     }
 
     std::cout << " - Done!" << std::endl;
