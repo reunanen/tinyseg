@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
     const auto early_stop_criterion = [&test_accuracies, &early_stop_count]() {
         const size_t count = test_accuracies.size();
-        return count > early_stop_count && test_accuracies[count - 1] < test_accuracies[count - 1 - early_stop_count];
+        return count > early_stop_count && test_accuracies[count - 1] <= test_accuracies[count - 1 - early_stop_count];
     };
 
     auto best_net = net;
