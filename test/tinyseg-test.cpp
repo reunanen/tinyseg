@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
         cv::Scalar(0, 0, 255),
     };
 
-    const auto& dataset = tinyseg::load_image("../test-images/1.jpg", "../test-images/1.png", mask_colors);
+    const auto& sample = tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", mask_colors);
 
     return 0;
 }
