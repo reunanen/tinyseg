@@ -36,6 +36,18 @@ struct training_dataset {
         std::swap(labels, new_labels);
     }
 
+    std::pair<training_dataset, training_dataset> split(double first_percentage = 50.0) {
+        std::pair<training_dataset, training_dataset> result;
+        training_dataset shuffled = *this;
+        shuffled.shuffle();
+        size_t first_count = static_cast<size_t>(inputs.size() * first_percentage / 100.0);
+        std::copy(shuffled.inputs.begin(), shuffled.inputs.begin() + first_count, std::back_inserter(result.first.inputs));
+        std::copy(shuffled.labels.begin(), shuffled.labels.begin() + first_count, std::back_inserter(result.first.labels));
+        std::copy(shuffled.inputs.begin() + first_count, shuffled.inputs.end(), std::back_inserter(result.second.inputs));
+        std::copy(shuffled.labels.begin() + first_count, shuffled.labels.end(), std::back_inserter(result.second.labels));
+        return result;
+    }
+
     bool is_valid() {
         return inputs.size() == labels.size();
     }
