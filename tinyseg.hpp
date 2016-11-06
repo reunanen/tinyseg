@@ -61,7 +61,7 @@ sample load_image(const std::string& original_image_filename, const std::string&
 }
 
 struct create_training_dataset_params {
-    cv::Size window_size_half = cv::Size(10, 10);
+    cv::Size window_size_half = cv::Size(20, 20);
     int border_type = cv::BORDER_REFLECT;
     cv::Scalar border_value = cv::Scalar();
 };

@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 
     const auto& samples = std::deque<tinyseg::sample>{
         tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", label_colors),
-        tinyseg::load_image("../test-images/02.jpg", "../test-images/02.png", label_colors),
+        //tinyseg::load_image("../test-images/02.jpg", "../test-images/02.png", label_colors),
     };
 
     std::cout << samples.size() << " images read" << std::endl;
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     const int initial_conv = 6;
     const int feature_map_count = 6;
     const int pooling = 2;
-    const int fully_connected_neuron_count = 120;
+    const int fully_connected_neuron_count = 40;
 
     // add layers
     net << tiny_dnn::conv<tiny_dnn::tan_h>(input_width, input_height, initial_conv, 1, feature_map_count)
@@ -50,11 +50,23 @@ int main(int argc, char* argv[])
 
     // train (10-epoch, 50-minibatch)
     const size_t minibatch_size = 50;
-    const int epoch_count = 10;
+    const int epoch_count = 5;
+    int epoch = 0;
 
-    std::cout << "Training: ";
+    std::cout << "Training for " << epoch_count << " epochs: ";
 
-    net.train<tiny_dnn::mse>(optimizer, dataset.inputs, dataset.labels, minibatch_size, epoch_count);
+    const auto on_epoch_enumerate = [&epoch]() {
+        if (epoch > 0) {
+            std::cout << " ";
+        }
+        std::cout << ++epoch;
+    };
+
+    const auto on_batch_enumerate = []() {};
+
+    const bool reset_weights = true;
+
+    net.train<tiny_dnn::mse>(optimizer, dataset.inputs, dataset.labels, minibatch_size, epoch_count, on_batch_enumerate, on_epoch_enumerate, reset_weights);
 
     const tiny_dnn::result test_result = net.test(dataset.inputs, dataset.labels);
 
