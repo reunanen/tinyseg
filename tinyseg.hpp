@@ -104,6 +104,9 @@ struct create_training_dataset_params {
 };
 
 cv::Mat make_border(const cv::Mat& original_image, const create_training_dataset_params& params) {
+    if (original_image.data == nullptr) {
+        throw std::runtime_error("make_border: original_image is empty");
+    }
     cv::Mat original_image_with_borders;
     cv::copyMakeBorder(original_image, original_image_with_borders,
         params.window_size_half.height, params.window_size_half.height,

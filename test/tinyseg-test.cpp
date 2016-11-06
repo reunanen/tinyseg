@@ -1,6 +1,6 @@
 #include "../tinyseg.hpp"
 
-int main(int argc, char* argv[])
+void test()
 {
     const std::vector<cv::Scalar> label_colors = {
         cv::Scalar(127, 127, 127),
@@ -112,8 +112,8 @@ int main(int argc, char* argv[])
     for (int test_image = 1; test_image < 10; ++test_image) {
 
         std::ostringstream input_filename, output_filename;
-        input_filename << "../test-images/" << std::setw << std::setfill('0') << test_image << ".jpg";
-        output_filename << "../test-images/" << std::setw << std::setfill('0') << test_image << "_result.png";
+        input_filename << "../test-images/" << std::setw(2) << std::setfill('0') << test_image << ".jpg";
+        output_filename << "../test-images/" << std::setw(2) << std::setfill('0') << test_image << "_result.png";
 
         cv::Mat roi; // no ROI
 
@@ -147,7 +147,16 @@ int main(int argc, char* argv[])
     }
 
     std::cout << " - Done!" << std::endl;
-
-    return 0;
 }
 
+int main(int argc, char* argv[])
+{
+    try {
+        test();
+    }
+    catch (const std::exception& e) {
+        std::cerr << std::endl << e.what() << std::endl;
+    }
+    
+    return 0;
+}
