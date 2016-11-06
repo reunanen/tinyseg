@@ -48,9 +48,9 @@ int main(int argc, char* argv[])
     // declare optimization algorithm
     tiny_dnn::adagrad optimizer;
 
-    // train (1-epoch, 30-minibatch)
-    const size_t minibatch_size = 30;
-    const int epoch_count = 2;
+    // train (10-epoch, 50-minibatch)
+    const size_t minibatch_size = 50;
+    const int epoch_count = 10;
 
     std::cout << "Training: ";
 
