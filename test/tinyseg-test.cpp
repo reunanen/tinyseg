@@ -56,10 +56,6 @@ int main(int argc, char* argv[])
 
     std::cout << "Training for max " << max_epoch_count << " epochs:";
 
-    std::pair<tinyseg::training_dataset, tinyseg::training_dataset> split_data = full_dataset.split(50.0);
-    tinyseg::training_dataset& training_data = split_data.first;
-    tinyseg::training_dataset& test_data = split_data.second;
-
     std::vector<double> test_accuracies;
 
     const auto early_stop_criterion = [&test_accuracies, &early_stop_count]() {
@@ -75,7 +71,9 @@ int main(int argc, char* argv[])
     size_t epoch = 0;
 
     while (true) {
-        training_data.shuffle();
+        std::pair<tinyseg::training_dataset, tinyseg::training_dataset> split_data = full_dataset.split(50.0);
+        tinyseg::training_dataset& training_data = split_data.first;
+        tinyseg::training_dataset& test_data = split_data.second;
 
         const auto on_epoch_enumerate = []() {};
         const auto on_batch_enumerate = []() {};

@@ -41,10 +41,10 @@ struct training_dataset {
         training_dataset shuffled = *this;
         shuffled.shuffle();
         size_t first_count = static_cast<size_t>(inputs.size() * first_percentage / 100.0);
-        std::copy(shuffled.inputs.begin(), shuffled.inputs.begin() + first_count, std::back_inserter(result.first.inputs));
-        std::copy(shuffled.labels.begin(), shuffled.labels.begin() + first_count, std::back_inserter(result.first.labels));
-        std::copy(shuffled.inputs.begin() + first_count, shuffled.inputs.end(), std::back_inserter(result.second.inputs));
-        std::copy(shuffled.labels.begin() + first_count, shuffled.labels.end(), std::back_inserter(result.second.labels));
+        std::move(shuffled.inputs.begin(), shuffled.inputs.begin() + first_count, std::back_inserter(result.first.inputs));
+        std::move(shuffled.labels.begin(), shuffled.labels.begin() + first_count, std::back_inserter(result.first.labels));
+        std::move(shuffled.inputs.begin() + first_count, shuffled.inputs.end(), std::back_inserter(result.second.inputs));
+        std::move(shuffled.labels.begin() + first_count, shuffled.labels.end(), std::back_inserter(result.second.labels));
         return result;
     }
 
