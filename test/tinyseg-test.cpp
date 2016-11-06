@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     tinyseg::create_training_dataset_params create_training_dataset_params;
 
-    const auto& dataset = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
+    auto& dataset = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
 
     std::cout << dataset.inputs.size() << " samples created" << std::endl;
 
@@ -47,30 +47,36 @@ int main(int argc, char* argv[])
 
     // declare optimization algorithm
     tiny_dnn::adagrad optimizer;
+    
+    const tiny_dnn::float_t min_alpha(0.00001f);
 
-    // train (10-epoch, 50-minibatch)
     const size_t minibatch_size = 50;
-    const int epoch_count = 5;
+    const int epoch_count = 20;
     int epoch = 0;
 
-    std::cout << "Training for " << epoch_count << " epochs: ";
+    std::cout << "Training for " << epoch_count << " epochs:";
 
-    const auto on_epoch_enumerate = [&epoch]() {
-        if (epoch > 0) {
-            std::cout << " ";
-        }
-        std::cout << ++epoch;
-    };
+    bool reset_weights = true;
 
-    const auto on_batch_enumerate = []() {};
+    for (int epoch = 0; epoch < epoch_count; ++epoch) {
+        dataset.shuffle();
 
-    const bool reset_weights = true;
+        const auto on_epoch_enumerate = []() {};
+        const auto on_batch_enumerate = []() {};
 
-    net.train<tiny_dnn::mse>(optimizer, dataset.inputs, dataset.labels, minibatch_size, epoch_count, on_batch_enumerate, on_epoch_enumerate, reset_weights);
+        net.train<tiny_dnn::mse>(optimizer, dataset.inputs, dataset.labels, minibatch_size, 1, on_batch_enumerate, on_epoch_enumerate, reset_weights);
 
-    const tiny_dnn::result test_result = net.test(dataset.inputs, dataset.labels);
+        //std::cout << ++epoch << " ";
+        optimizer.alpha = std::max(0.5f * optimizer.alpha, min_alpha);
 
-    std::cout << test_result.accuracy() << " %" << std::endl;
+        const tiny_dnn::result test_result = net.test(dataset.inputs, dataset.labels);
+
+        std::cout << " " << std::fixed << std::setprecision(1) << test_result.accuracy() << "%";
+
+        reset_weights = false;
+    }
+
+    std::cout << std::endl;
 
     std::cout << "Testing: ";
 

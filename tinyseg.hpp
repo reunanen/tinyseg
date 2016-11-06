@@ -1,9 +1,10 @@
 #include <tiny_dnn/tiny_dnn.h>
-#include <vector>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
+
+#include <numeric> // std::iota
 
 namespace tinyseg {
 
@@ -14,6 +15,30 @@ struct training_dataset {
     std::vector<tiny_dnn::vec_t> inputs;
     std::vector<tiny_dnn::label_t> labels;
     //std::vector<tiny_dnn::vec_t> weights;
+
+    void shuffle() {
+        if (!is_valid()) {
+            throw std::runtime_error("Training dataset is not valid");
+        }
+        std::vector<size_t> new_order(inputs.size());
+        std::iota(new_order.begin(), new_order.end(), 0);
+        std::shuffle(new_order.begin(), new_order.end(), std::mt19937{ std::random_device{}() });
+
+        std::vector<tiny_dnn::vec_t> new_inputs(inputs.size());
+        std::vector<tiny_dnn::label_t> new_labels(labels.size());
+
+        for (size_t i = 0, end = inputs.size(); i < end; ++i) {
+            new_inputs[i] = inputs[new_order[i]];
+            new_labels[i] = labels[new_order[i]];
+        }
+
+        std::swap(inputs, new_inputs);
+        std::swap(labels, new_labels);
+    }
+
+    bool is_valid() {
+        return inputs.size() == labels.size();
+    }
 };
 
 struct sample {
