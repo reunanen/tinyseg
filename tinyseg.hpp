@@ -66,6 +66,15 @@ struct create_training_dataset_params {
     cv::Scalar border_value = cv::Scalar();
 };
 
+cv::Mat make_border(const cv::Mat& original_image, const create_training_dataset_params& params) {
+    cv::Mat original_image_with_borders;
+    cv::copyMakeBorder(original_image, original_image_with_borders,
+        params.window_size_half.height, params.window_size_half.height,
+        params.window_size_half.width, params.window_size_half.width,
+        params.border_type, params.border_value);
+    return original_image_with_borders;
+}
+
 template <typename InputIterator>
 training_dataset create_training_dataset(InputIterator begin, InputIterator end, const create_training_dataset_params& params = create_training_dataset_params()) {
     training_dataset dataset;
@@ -74,14 +83,14 @@ training_dataset create_training_dataset(InputIterator begin, InputIterator end,
     dataset.inputs.reserve(initial_capacity);
     dataset.labels.reserve(initial_capacity);
 
+#ifdef _DEBUG
+    size_t sample_index = 0;
+#endif // _DEBUG
+
     for (InputIterator i = begin; i != end; ++i) {
         const sample& sample = *i;
 
-        cv::Mat original_image_with_borders;
-        cv::copyMakeBorder(sample.original_image, original_image_with_borders,
-            params.window_size_half.height, params.window_size_half.height,
-            params.window_size_half.width, params.window_size_half.width,
-            params.border_type, params.border_value);
+        const cv::Mat original_image_with_borders = make_border(sample.original_image, params);
 
         std::vector<cv::Point> nz;
 
@@ -90,6 +99,13 @@ training_dataset create_training_dataset(InputIterator begin, InputIterator end,
         tiny_dnn::vec_t input; // , weights;
 
         for (const auto& point : nz) {
+
+#ifdef _DEBUG
+            if (sample_index++ % 100 != 0) {
+                continue;
+            }
+#endif // _DEBUG
+
             cv::Rect source_rect(point.x, point.y, params.window_size_half.width * 2 + 1, params.window_size_half.height * 2 + 1);
             cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
 
@@ -107,6 +123,42 @@ training_dataset create_training_dataset(InputIterator begin, InputIterator end,
     }
 
     return dataset;
+}
+
+struct runtime_params {
+    // TODO: sampling density, etc
+};
+
+tiny_dnn::tensor_t convert_to_tinydnn_inputs(const cv::Mat& original_image, const cv::Mat& roi = cv::Mat(), const create_training_dataset_params& params = create_training_dataset_params()) {
+    std::vector<cv::Point> nz;
+    if (roi.data == nullptr) { // no ROI given
+        nz.reserve(original_image.size().area());
+        for (int y = 0; y < original_image.rows; ++y) {
+            for (int x = 0; x < original_image.cols; ++x) {
+                nz.push_back(cv::Point(x, y));
+            }
+        }
+    }
+    else {
+        cv::findNonZero(roi, nz);
+    }
+
+    const cv::Mat original_image_with_borders = make_border(original_image, params);
+
+    cv::Mat float_image;
+    original_image_with_borders.convertTo(float_image, CV_32FC1);
+
+    tiny_dnn::tensor_t result;
+    result.reserve(nz.size());
+
+    for (const auto& point : nz) {
+        cv::Rect source_rect(point.x, point.y, params.window_size_half.width * 2 + 1, params.window_size_half.height * 2 + 1);
+        cv::Mat_<float> input_window = float_image(source_rect);
+        tiny_dnn::vec_t input(input_window.begin(), input_window.end());
+        result.push_back(input);
+    }
+
+    return result;
 }
 
 }

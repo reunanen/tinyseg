@@ -12,7 +12,8 @@ int main(int argc, char* argv[])
     std::cout << "Reading the input data: ";
 
     const auto& samples = std::deque<tinyseg::sample>{
-        tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", label_colors)
+        tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", label_colors),
+        tinyseg::load_image("../test-images/02.jpg", "../test-images/02.png", label_colors),
     };
 
     std::cout << samples.size() << " images read" << std::endl;
@@ -50,7 +51,44 @@ int main(int argc, char* argv[])
     // train (1-epoch, 30-minibatch)
     const size_t minibatch_size = 30;
     const int epoch_count = 2;
+
+    std::cout << "Training: ";
+
     net.train<tiny_dnn::mse>(optimizer, dataset.inputs, dataset.labels, minibatch_size, epoch_count);
+
+    const tiny_dnn::result test_result = net.test(dataset.inputs, dataset.labels);
+
+    std::cout << test_result.accuracy() << " %" << std::endl;
+
+    std::cout << "Testing: ";
+
+    cv::Mat roi; // no ROI
+
+    cv::Mat test_image = cv::imread("../test-images/01.jpg", cv::IMREAD_GRAYSCALE);
+    //cv::resize(test_image, test_image, cv::Size(), 0.1, 0.1);
+
+    cv::Mat result(test_image.size(), CV_8UC3);
+
+    tiny_dnn::tensor_t test_inputs = convert_to_tinydnn_inputs(test_image, roi, create_training_dataset_params);
+
+    assert(test_inputs.size() == test_image.size().area());
+
+    size_t i = 0;
+    for (int y = 0; y < test_image.rows; ++y) {
+        for (int x = 0; x < test_image.cols; ++x, ++i) {
+            tiny_dnn::label_t label = net.predict_label(test_inputs[i]);
+            const auto& label_color = label_colors[label];
+            result.at<cv::Vec3b>(y, x) = cv::Vec3b(
+                static_cast<unsigned char>(label_color[0]),
+                static_cast<unsigned char>(label_color[1]),
+                static_cast<unsigned char>(label_color[2])
+            );
+        }
+    }
+
+    cv::imwrite("result.png", result);
+
+    std::cout << "Done!" << std::endl;
 
     return 0;
 }
