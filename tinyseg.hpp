@@ -10,7 +10,7 @@ namespace tinyseg {
 typedef unsigned short label_image_t;
 const int label_image_type = CV_16UC1;
 
-struct dataset {
+struct training_dataset {
     std::vector<tiny_dnn::vec_t> inputs;
     std::vector<tiny_dnn::label_t> labels;
     //std::vector<tiny_dnn::vec_t> weights;
@@ -60,15 +60,15 @@ sample load_image(const std::string& original_image_filename, const std::string&
     return sample;
 }
 
-struct create_dataset_params {
-    cv::Size windowSizeHalf = cv::Size(10, 10);
-    int borderType = cv::BORDER_REFLECT;
-    cv::Scalar borderValue = cv::Scalar();
+struct create_training_dataset_params {
+    cv::Size window_size_half = cv::Size(10, 10);
+    int border_type = cv::BORDER_REFLECT;
+    cv::Scalar border_value = cv::Scalar();
 };
 
 template <typename InputIterator>
-dataset create_dataset(InputIterator begin, InputIterator end, const create_dataset_params& params = create_dataset_params()) {
-    dataset dataset;
+training_dataset create_training_dataset(InputIterator begin, InputIterator end, const create_training_dataset_params& params = create_training_dataset_params()) {
+    training_dataset dataset;
 
     const size_t initial_capacity = 16 * 1024 * 1024;
     dataset.inputs.reserve(initial_capacity);
@@ -79,9 +79,9 @@ dataset create_dataset(InputIterator begin, InputIterator end, const create_data
 
         cv::Mat original_image_with_borders;
         cv::copyMakeBorder(sample.original_image, original_image_with_borders,
-            params.windowSizeHalf.height, params.windowSizeHalf.height,
-            params.windowSizeHalf.width, params.windowSizeHalf.width,
-            params.borderType, params.borderValue);
+            params.window_size_half.height, params.window_size_half.height,
+            params.window_size_half.width, params.window_size_half.width,
+            params.border_type, params.border_value);
 
         std::vector<cv::Point> nz;
 
@@ -90,7 +90,7 @@ dataset create_dataset(InputIterator begin, InputIterator end, const create_data
         tiny_dnn::vec_t input; // , weights;
 
         for (const auto& point : nz) {
-            cv::Rect source_rect(point.x, point.y, params.windowSizeHalf.width * 2 + 1, params.windowSizeHalf.height * 2 + 1);
+            cv::Rect source_rect(point.x, point.y, params.window_size_half.width * 2 + 1, params.window_size_half.height * 2 + 1);
             cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
 
             input.clear();
