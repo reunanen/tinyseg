@@ -103,6 +103,8 @@ struct create_training_dataset_params {
     cv::Size window_size_half = cv::Size(20, 20);
     int border_type = cv::BORDER_REFLECT;
     cv::Scalar border_value = cv::Scalar();
+
+    uint32_t sample_count = 32768;
 };
 
 cv::Mat make_border(const cv::Mat& original_image, const create_training_dataset_params& params) {
@@ -121,44 +123,66 @@ template <typename InputIterator>
 training_dataset create_training_dataset(InputIterator begin, InputIterator end, const create_training_dataset_params& params = create_training_dataset_params()) {
     training_dataset dataset;
 
-    const size_t initial_capacity = 16 * 1024 * 1024;
-    dataset.inputs.reserve(initial_capacity);
-    dataset.labels.reserve(initial_capacity);
+    typedef unsigned long long index_type;
 
-#ifdef _DEBUG
-    size_t sample_index = 0;
-#endif // _DEBUG
+    const index_type total_available_sample_count = std::accumulate(begin, end, static_cast<index_type>(0), [](index_type result, const sample& sample) { return result + sample.mask.size(); });
 
-    for (InputIterator i = begin; i != end; ++i) {
+    std::vector<index_type> sample_indexes(params.sample_count);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<index_type> distribution(0, total_available_sample_count);
+
+    for (size_t picked_sample = 0; picked_sample < params.sample_count; ++picked_sample) {
+        sample_indexes[picked_sample] = distribution(gen); // with replacement
+    }
+
+    std::sort(sample_indexes.begin(), sample_indexes.end());
+
+    dataset.inputs.reserve(params.sample_count);
+    dataset.labels.reserve(params.sample_count);
+
+    index_type sample_index = 0;
+    uint32_t picked_sample_index = 0;
+
+    for (InputIterator i = begin; i != end && picked_sample_index < params.sample_count; ++i) {
         const sample& sample = *i;
 
+        // TODO: avoid re-doing this over and over again
         const cv::Mat original_image_with_borders = make_border(sample.original_image, params);
 
         tiny_dnn::vec_t input; // , weights;
 
-        for (const auto& point : sample.mask) {
+        for (size_t point_index = 0, end = sample.mask.size(); point_index < end && picked_sample_index < params.sample_count; ) {
+            const auto& point = sample.mask[point_index];
+            if (sample_index == sample_indexes[picked_sample_index]) {
+                cv::Rect source_rect(point.x, point.y, params.window_size_half.width * 2 + 1, params.window_size_half.height * 2 + 1);
+                cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
 
-#ifdef _DEBUG
-            if (sample_index++ % 100 != 0) {
-                continue;
+                input.clear();
+                std::transform(input_window.begin(), input_window.end(), std::back_inserter(input),
+                    [](uint8_t input) {
+                        return static_cast<tiny_dnn::float_t>(input);
+                    });
+
+                tiny_dnn::label_t label = sample.labels.at<label_image_t>(point);
+
+                dataset.inputs.push_back(input);
+                dataset.labels.push_back(label);
+
+                ++picked_sample_index;
             }
-#endif // _DEBUG
-
-            cv::Rect source_rect(point.x, point.y, params.window_size_half.width * 2 + 1, params.window_size_half.height * 2 + 1);
-            cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
-
-            input.clear();
-            std::transform(input_window.begin(), input_window.end(), std::back_inserter(input),
-                [](uint8_t input) {
-                    return static_cast<tiny_dnn::float_t>(input);
-                });
-
-            tiny_dnn::label_t label = sample.labels.at<label_image_t>(point);
-
-            dataset.inputs.push_back(input);
-            dataset.labels.push_back(label);
+            else {
+                ++sample_index;
+                ++point_index;
+            }
         }
     }
+
+    assert(dataset.inputs.size() == params.sample_count);
+    assert(dataset.labels.size() == params.sample_count);
+
+    dataset.shuffle();
 
     return dataset;
 }
