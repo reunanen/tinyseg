@@ -122,7 +122,12 @@ void test()
 
         cv::Mat input_image = cv::imread(input_filename.str(), cv::IMREAD_GRAYSCALE);
         while (input_image.size().area() > 512 * 512) {
-            cv::resize(input_image, input_image, cv::Size(), 0.5, 0.5);
+            const double resize_factor = 1.0 / sqrt(2.0);
+            cv::resize(input_image, input_image, cv::Size(), resize_factor, resize_factor);
+
+            std::ostringstream resized_input_filename;
+            resized_input_filename << "../test-images/" << std::setw(2) << std::setfill('0') << test_image << "_resized.jpg";
+            cv::imwrite(resized_input_filename.str(), input_image);
         }
 
         cv::Mat result(input_image.size(), CV_8UC3);
