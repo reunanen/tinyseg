@@ -3,13 +3,17 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 namespace tinyseg {
+
+typedef unsigned short label_image_t;
+const int label_image_type = CV_16UC1;
 
 struct dataset {
     std::vector<tiny_dnn::vec_t> inputs;
     std::vector<tiny_dnn::label_t> labels;
-    std::vector<tiny_dnn::vec_t> weights;
+    //std::vector<tiny_dnn::vec_t> weights;
 };
 
 struct sample {
@@ -39,8 +43,8 @@ sample load_image(const std::string& original_image_filename, const std::string&
         throw std::runtime_error("Original and labels image size mismatch");
     }
 
-    sample.labels.create(image_size, CV_16UC1);
-    sample.labels.setTo(std::numeric_limits<unsigned short>::max());
+    sample.labels.create(image_size, label_image_type);
+    sample.labels.setTo(std::numeric_limits<label_image_t>::max());
 
     sample.mask.create(image_size, CV_8UC1);
     sample.mask.setTo(0);
@@ -56,16 +60,53 @@ sample load_image(const std::string& original_image_filename, const std::string&
     return sample;
 }
 
+struct create_dataset_params {
+    cv::Size windowSizeHalf = cv::Size(10, 10);
+    int borderType = cv::BORDER_REFLECT;
+    cv::Scalar borderValue = cv::Scalar();
+};
+
 template <typename InputIterator>
-dataset create_dataset(InputIterator begin, InputIterator end) {
+dataset create_dataset(InputIterator begin, InputIterator end, const create_dataset_params& params = create_dataset_params()) {
     dataset dataset;
 
-    std::transform(input.begin(), input.end(), std::back_inserter(dataset.inputs), [](uint8_t input) { return static_cast<tiny_dnn::float_t>(input); });
-    std::transform(labels.begin(), labels.end(), std::back_inserter(dataset.labels), [](uint16_t label) { return static_cast<tiny_dnn::float_t>(label); });
-    std::transform(weights.begin(), weights.end(), std::back_inserter(dataset.weights), [](uint8_t weight) { return static_cast<tiny_dnn::float_t>(weight); });
+    const size_t initial_capacity = 16 * 1024 * 1024;
+    dataset.inputs.reserve(initial_capacity);
+    dataset.labels.reserve(initial_capacity);
+
+    for (InputIterator i = begin; i != end; ++i) {
+        const sample& sample = *i;
+
+        cv::Mat original_image_with_borders;
+        cv::copyMakeBorder(sample.original_image, original_image_with_borders,
+            params.windowSizeHalf.height, params.windowSizeHalf.height,
+            params.windowSizeHalf.width, params.windowSizeHalf.width,
+            params.borderType, params.borderValue);
+
+        std::vector<cv::Point> nz;
+
+        cv::findNonZero(sample.mask, nz);        
+
+        tiny_dnn::vec_t input; // , weights;
+
+        for (const auto& point : nz) {
+            cv::Rect source_rect(point.x, point.y, params.windowSizeHalf.width * 2 + 1, params.windowSizeHalf.height * 2 + 1);
+            cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
+
+            input.clear();
+            std::transform(input_window.begin(), input_window.end(), std::back_inserter(input),
+                [](uint8_t input) {
+                    return static_cast<tiny_dnn::float_t>(input);
+                });
+
+            tiny_dnn::label_t label = sample.labels.at<label_image_t>(point);
+
+            dataset.inputs.push_back(input);
+            dataset.labels.push_back(label);
+        }
+    }
 
     return dataset;
-
 }
 
 }

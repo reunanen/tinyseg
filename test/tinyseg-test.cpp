@@ -9,7 +9,11 @@ int main(int argc, char* argv[])
         cv::Scalar(0, 0, 255),
     };
 
-    const auto& sample = tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", mask_colors);
+    const auto& samples = std::deque<tinyseg::sample>{
+        tinyseg::load_image("../test-images/01.jpg", "../test-images/01.png", mask_colors)
+    };
+
+    const auto& dataset = tinyseg::create_dataset(samples.begin(), samples.end());
 
     return 0;
 }
