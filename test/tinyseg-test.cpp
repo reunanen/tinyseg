@@ -13,7 +13,10 @@ void test()
 
     const auto& samples = std::deque<tinyseg::sample>{
         tinyseg::load_image("../test-images/01.jpg", "../test-images/01_labels.png", label_colors),
-        //tinyseg::load_image("../test-images/02.jpg", "../test-images/02_labels.png", label_colors),
+#if SIZE_MAX > 0xffffffff
+        // 64-bit build
+        tinyseg::load_image("../test-images/02.jpg", "../test-images/02_labels.png", label_colors),
+#endif
     };
 
     std::cout << samples.size() << " images read" << std::endl;
@@ -30,7 +33,7 @@ void test()
 
     const int input_width = 2 * create_training_dataset_params.window_size_half.width + 1;
     const int input_height = 2 * create_training_dataset_params.window_size_half.height + 1;
-    const int class_count = label_colors.size();
+    const tiny_dnn::cnn_size_t class_count = static_cast<tiny_dnn::cnn_size_t>(label_colors.size());
     const int initial_conv = 6;
     const int feature_map_count = 6;
     const int pooling = 2;

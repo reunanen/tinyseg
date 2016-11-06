@@ -87,7 +87,7 @@ sample load_image(const std::string& original_image_filename, const std::string&
     sample.mask.setTo(0);
 
     cv::Mat label_mask;
-    for (tiny_dnn::label_t label = 0, label_count = label_colors.size(); label < label_count; ++label) {
+    for (tiny_dnn::label_t label = 0, label_count = static_cast<tiny_dnn::label_t>(label_colors.size()); label < label_count; ++label) {
         const cv::Scalar& label_color = label_colors[label];
         cv::inRange(labels_mask, label_color, label_color, label_mask);
         sample.labels.setTo(label, label_mask);
