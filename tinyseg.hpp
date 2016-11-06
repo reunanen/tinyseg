@@ -56,7 +56,7 @@ struct training_dataset {
 struct sample {
     cv::Mat original_image;
     cv::Mat labels;
-    cv::Mat mask; // non-zero where labels are valid
+    std::vector<cv::Point> mask; // where are the labels valid?
 };
 
 sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors) {
@@ -83,15 +83,17 @@ sample load_image(const std::string& original_image_filename, const std::string&
     sample.labels.create(image_size, label_image_type);
     sample.labels.setTo(std::numeric_limits<label_image_t>::max());
 
-    sample.mask.create(image_size, CV_8UC1);
-    sample.mask.setTo(0);
+    std::vector<cv::Point> mask;
 
     cv::Mat label_mask;
     for (tiny_dnn::label_t label = 0, label_count = static_cast<tiny_dnn::label_t>(label_colors.size()); label < label_count; ++label) {
         const cv::Scalar& label_color = label_colors[label];
         cv::inRange(labels_mask, label_color, label_color, label_mask);
         sample.labels.setTo(label, label_mask);
-        sample.mask.setTo(255, label_mask);
+
+        mask.clear();
+        cv::findNonZero(label_mask, mask);
+        std::move(mask.begin(), mask.end(), std::back_inserter(sample.mask));
     }
 
     return sample;
@@ -132,13 +134,9 @@ training_dataset create_training_dataset(InputIterator begin, InputIterator end,
 
         const cv::Mat original_image_with_borders = make_border(sample.original_image, params);
 
-        std::vector<cv::Point> nz;
-
-        cv::findNonZero(sample.mask, nz);        
-
         tiny_dnn::vec_t input; // , weights;
 
-        for (const auto& point : nz) {
+        for (const auto& point : sample.mask) {
 
 #ifdef _DEBUG
             if (sample_index++ % 100 != 0) {
