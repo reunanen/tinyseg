@@ -21,7 +21,13 @@ void test()
 
     std::cout << samples.size() << " images read" << std::endl;
 
+    std::cout << "Creating the training dataset: ";
+
     tinyseg::create_training_dataset_params create_training_dataset_params;
+
+    auto& full_dataset = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
+
+    std::cout << full_dataset.inputs.size() << " samples created" << std::endl;
 
     tiny_dnn::network<tiny_dnn::sequential> net;
 
@@ -47,9 +53,9 @@ void test()
     
     const tiny_dnn::float_t min_alpha(0.0000001f);
 
-    const size_t minibatch_size = 100;
-    const size_t max_epoch_count = 100;
-    const size_t early_stop_count = 10;
+    const size_t minibatch_size = 50;
+    const size_t max_epoch_count = 20;
+    const size_t early_stop_count = 3;
 
     std::cout << "Training for max " << max_epoch_count << " epochs:";
 
@@ -68,20 +74,19 @@ void test()
     size_t epoch = 0;
 
     while (true) {
-        {
-            const auto training_set = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
+        std::pair<tinyseg::training_dataset, tinyseg::training_dataset> split_data = full_dataset.split(50.0);
+        tinyseg::training_dataset& training_data = split_data.first;
+        tinyseg::training_dataset& test_data = split_data.second;
 
-            const auto on_epoch_enumerate = []() {};
-            const auto on_batch_enumerate = []() {};
+        const auto on_epoch_enumerate = []() {};
+        const auto on_batch_enumerate = []() {};
 
-            net.train<tiny_dnn::mse>(optimizer, training_set.inputs, training_set.labels, minibatch_size, 1, on_batch_enumerate, on_epoch_enumerate, reset_weights);
+        net.train<tiny_dnn::mse>(optimizer, training_data.inputs, training_data.labels, minibatch_size, 1, on_batch_enumerate, on_epoch_enumerate, reset_weights);
 
-            optimizer.alpha = std::max(0.5f * optimizer.alpha, min_alpha);
-        }
+        //std::cout << ++epoch << " ";
+        optimizer.alpha = std::max(0.5f * optimizer.alpha, min_alpha);
 
-        const auto test_set = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
-
-        const tiny_dnn::result test_result = net.test(test_set.inputs, test_set.labels);
+        const tiny_dnn::result test_result = net.test(test_data.inputs, test_data.labels);
 
         const auto accuracy = test_result.accuracy();
 
