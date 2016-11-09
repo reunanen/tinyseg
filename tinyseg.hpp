@@ -83,7 +83,10 @@ sample load_image(const std::string& original_image_filename, const std::string&
     sample.labels.create(image_size, label_image_type);
     sample.labels.setTo(std::numeric_limits<label_image_t>::max());
 
+    sample.mask.reserve(image_size.area());
+
     std::vector<cv::Point> mask;
+    mask.reserve(image_size.area());
 
     cv::Mat label_mask;
     for (tiny_dnn::label_t label = 0, label_count = static_cast<tiny_dnn::label_t>(label_colors.size()); label < label_count; ++label) {
