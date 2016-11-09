@@ -59,10 +59,10 @@ struct sample {
     std::vector<cv::Point> mask; // where are the labels valid?
 };
 
-sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors) {
+sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors, int original_image_read_flags = cv::IMREAD_GRAYSCALE) {
     sample sample;
 
-    sample.original_image = cv::imread(original_image_filename, cv::IMREAD_GRAYSCALE);
+    sample.original_image = cv::imread(original_image_filename, original_image_read_flags);
 
     if (sample.original_image.data == nullptr) {
         throw std::runtime_error("Unable to read original image file");
