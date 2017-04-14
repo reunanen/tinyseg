@@ -1,6 +1,3 @@
-[submodule "tiny-dnn"]
-	path = tiny-dnn
-	url = https://github.com/reunanen/tiny-dnn
 [submodule "opencv-binaries-vs"]
 	path = opencv-binaries-vs
 	url = https://github.com/reunanen/opencv-binaries-vs
