@@ -4,3 +4,6 @@
 [submodule "opencv-binaries-vs"]
 	path = opencv-binaries-vs
 	url = https://github.com/reunanen/opencv-binaries-vs
+[submodule "dlib"]
+	path = dlib
+	url = https://github.com/reunanen/dlib
