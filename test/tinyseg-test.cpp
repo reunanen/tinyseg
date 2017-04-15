@@ -37,23 +37,9 @@ void test()
 
     tinyseg::net_type net;
 
-    const size_t class_count = label_colors.size();
-
     const size_t minibatch_size = 2000;
-    const size_t max_epoch_count = 100;
-    const size_t early_stop_count = 3;
-
-    std::cout << "Training for max " << max_epoch_count << " epochs:";
-
-    std::vector<double> test_accuracies;
-
-    const auto early_stop_criterion = [&test_accuracies, &early_stop_count]() {
-        const size_t count = test_accuracies.size();
-        return count > early_stop_count && test_accuracies[count - 1] <= test_accuracies[count - 1 - early_stop_count];
-    };
-
     const double initial_learning_rate = 0.1;
-    const double weight_decay = 0.0001;
+    const double weight_decay = 0.0005;
     const double momentum = 0.9;
 
     dlib::dnn_trainer<tinyseg::net_type> trainer(net, dlib::sgd(weight_decay, momentum));
@@ -61,15 +47,14 @@ void test()
     trainer.be_verbose();
     trainer.set_learning_rate(initial_learning_rate);
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
-    trainer.set_iterations_without_progress_threshold(200);
+    trainer.set_iterations_without_progress_threshold(100);
     trainer.set_learning_rate_shrink_factor(0.1);
-    dlib::set_all_bn_running_stats_window_sizes(net, 100);
-
-    size_t epoch = 0;
 
     tinyseg::training_dataset minibatch;
 
-    while (true) {
+    std::cout << "Training:" << std::endl;
+
+    while (trainer.get_learning_rate() >= 1e-6) {
 
         minibatch.inputs.clear();
         minibatch.labels.clear();
@@ -81,39 +66,12 @@ void test()
         }
 
         trainer.train_one_step(minibatch.inputs, minibatch.labels);
-
-#if 0
-        const tiny_dnn::result test_result = net.test(test_data.inputs, test_data.labels);
-
-        const auto accuracy = test_result.accuracy();
-
-        test_accuracies.push_back(accuracy);
-
-        std::cout << " " << std::fixed << std::setprecision(1) << accuracy << "%";
-
-        if (accuracy > best_accuracy) {
-            best_accuracy = accuracy;
-            best_net = net;
-        }
-
-        reset_weights = false;
-#endif
-
-        std::cout << ".";
-        ++epoch;
-
-        if (early_stop_criterion() || epoch >= max_epoch_count) {
-            std::cout << std::endl << std::endl << "Confusion matrix:" << std::endl;
-            //test_result.print_detail(std::cout);
-            break;
-        }
     }
 
     trainer.get_net();
     net.clean();
 
     tinyseg::runtime_net_type runtime_net = net;
-    //tinyseg::net_type runtime_net = net;
 
     std::cout << std::endl << "Testing:";
 
