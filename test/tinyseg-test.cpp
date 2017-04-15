@@ -1,4 +1,10 @@
+#pragma warning( disable : 4503 ) // disable compiler warning C4503: decorated name length exceeded, name was truncated
+
 #include "../tinyseg.hpp"
+#include "../tinyseg-net-structure.hpp"
+
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 void test()
 {
@@ -29,32 +35,12 @@ void test()
 
     std::cout << full_dataset.inputs.size() << " samples created" << std::endl;
 
-    tiny_dnn::network<tiny_dnn::sequential> net;
+    tinyseg::net_type net;
 
-    const int input_width = 2 * create_training_dataset_params.window_size_half.width + 1;
-    const int input_height = 2 * create_training_dataset_params.window_size_half.height + 1;
-    const tiny_dnn::cnn_size_t class_count = static_cast<tiny_dnn::cnn_size_t>(label_colors.size());
-    const int initial_conv = 6;
-    const int feature_map_count = 6;
-    const int pooling = 2;
-    const int fully_connected_neuron_count = 40;
+    const size_t class_count = label_colors.size();
 
-    // add layers
-    net << tiny_dnn::conv<tiny_dnn::tan_h>(input_width, input_height, initial_conv, 1, feature_map_count)
-        << tiny_dnn::ave_pool<tiny_dnn::tan_h>(input_width - initial_conv + 1, input_width - initial_conv + 1, feature_map_count, pooling)
-        << tiny_dnn::fc<tiny_dnn::tan_h>((input_width - initial_conv + 1) / pooling * (input_width - initial_conv + 1) / pooling * feature_map_count, fully_connected_neuron_count)
-        << tiny_dnn::fc<tiny_dnn::identity>(fully_connected_neuron_count, class_count);
-
-    assert(net.in_data_size() == input_width * input_height);
-    assert(net.out_data_size() == class_count);
-
-    // declare optimization algorithm
-    tiny_dnn::adagrad optimizer;
-    
-    const tiny_dnn::float_t min_alpha(0.0000001f);
-
-    const size_t minibatch_size = 50;
-    const size_t max_epoch_count = 20;
+    const size_t minibatch_size = 2000;
+    const size_t max_epoch_count = 100;
     const size_t early_stop_count = 3;
 
     std::cout << "Training for max " << max_epoch_count << " epochs:";
@@ -66,26 +52,37 @@ void test()
         return count > early_stop_count && test_accuracies[count - 1] <= test_accuracies[count - 1 - early_stop_count];
     };
 
-    auto best_net = net;
-    tiny_dnn::float_t best_accuracy = 0.0;
+    const double initial_learning_rate = 0.1;
+    const double weight_decay = 0.0001;
+    const double momentum = 0.9;
 
-    bool reset_weights = true;
+    dlib::dnn_trainer<tinyseg::net_type> trainer(net, dlib::sgd(weight_decay, momentum));
+
+    trainer.be_verbose();
+    trainer.set_learning_rate(initial_learning_rate);
+    //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
+    trainer.set_iterations_without_progress_threshold(200);
+    trainer.set_learning_rate_shrink_factor(0.1);
+    dlib::set_all_bn_running_stats_window_sizes(net, 100);
 
     size_t epoch = 0;
 
+    tinyseg::training_dataset minibatch;
+
     while (true) {
-        std::pair<tinyseg::training_dataset, tinyseg::training_dataset> split_data = full_dataset.split(50.0);
-        tinyseg::training_dataset& training_data = split_data.first;
-        tinyseg::training_dataset& test_data = split_data.second;
 
-        const auto on_epoch_enumerate = []() {};
-        const auto on_batch_enumerate = []() {};
+        minibatch.inputs.clear();
+        minibatch.labels.clear();
 
-        net.train<tiny_dnn::mse>(optimizer, training_data.inputs, training_data.labels, minibatch_size, 1, on_batch_enumerate, on_epoch_enumerate, reset_weights);
+        for (size_t i = 0; i < minibatch_size; ++i) {
+            size_t index = rand() % full_dataset.inputs.size();
+            minibatch.inputs.push_back(full_dataset.inputs[index]);
+            minibatch.labels.push_back(full_dataset.labels[index]);
+        }
 
-        //std::cout << ++epoch << " ";
-        optimizer.alpha = std::max(0.5f * optimizer.alpha, min_alpha);
+        trainer.train_one_step(minibatch.inputs, minibatch.labels);
 
+#if 0
         const tiny_dnn::result test_result = net.test(test_data.inputs, test_data.labels);
 
         const auto accuracy = test_result.accuracy();
@@ -100,15 +97,23 @@ void test()
         }
 
         reset_weights = false;
+#endif
 
+        std::cout << ".";
         ++epoch;
 
         if (early_stop_criterion() || epoch >= max_epoch_count) {
             std::cout << std::endl << std::endl << "Confusion matrix:" << std::endl;
-            test_result.print_detail(std::cout);
+            //test_result.print_detail(std::cout);
             break;
         }
     }
+
+    trainer.get_net();
+    net.clean();
+
+    tinyseg::runtime_net_type runtime_net = net;
+    //tinyseg::net_type runtime_net = net;
 
     std::cout << std::endl << "Testing:";
 
@@ -132,14 +137,16 @@ void test()
 
         cv::Mat result(input_image.size(), CV_8UC3);
 
-        tiny_dnn::tensor_t test_inputs = convert_to_tinydnn_inputs(input_image, roi, create_training_dataset_params);
+        auto test_inputs = convert_to_dlib_inputs(input_image, roi, create_training_dataset_params);
+
+        const std::vector<tinyseg::label_t> predicted_labels = runtime_net(test_inputs);
 
         assert(test_inputs.size() == input_image.size().area());
 
         size_t i = 0;
         for (int y = 0; y < input_image.rows; ++y) {
             for (int x = 0; x < input_image.cols; ++x, ++i) {
-                tiny_dnn::label_t label = best_net.predict_label(test_inputs[i]);
+                const tinyseg::label_t label = predicted_labels[i];
                 const auto& label_color = label_colors[label];
                 result.at<cv::Vec3b>(y, x) = cv::Vec3b(
                     static_cast<unsigned char>(label_color[0]),

@@ -1,9 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="..\dlib\dlib\threads\thread_pool_extension.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\tensor_tools.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\cpu_dlib.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\threads\threaded_object_extension.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\threads\threads_kernel_shared.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\threads\threads_kernel_1.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinyseg.cpp">
+      <Filter>tinyseg</Filter>
+    </ClCompile>
     <ClCompile Include="tinyseg-test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\tinyseg.hpp" />
+    <ClInclude Include="..\tinyseg.hpp">
+      <Filter>tinyseg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tinyseg-net-structure.hpp">
+      <Filter>tinyseg</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tinyseg">
+      <UniqueIdentifier>{e81e5ce8-29a5-446f-88df-a9aad0059c6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyseg\dlib">
+      <UniqueIdentifier>{559bdfaa-d7b5-4ead-b1f3-8cccb9f86089}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
