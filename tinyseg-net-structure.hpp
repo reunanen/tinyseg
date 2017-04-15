@@ -43,7 +43,7 @@ using net_type = dlib::loss_multiclass_log<
 
 #if 1
 
-// Adapted for fully-convolutional use from: http://dlib.net/dnn_introduction2_ex.cpp.html
+// Adapted from: http://dlib.net/dnn_introduction2_ex.cpp.html
 
 // ----------------------------------------------------------------------------------------
 
@@ -137,8 +137,7 @@ template <typename SUBNET> using ares_down = dlib::relu<residual_down<block,8,dl
 // res<res<res<res<res<res<res<res<res<SUBNET>>>>>>>>>.  It will also prevent
 // the compiler from complaining about super deep template nesting when creating
 // large networks.
-using net_type = dlib::loss_multiclass_log<//dlib::fc<max_class_count,
-                            dlib::con<max_class_count, 1, 1, 1, 1,
+using net_type = dlib::loss_multiclass_log<dlib::fc<max_class_count,
                             dlib::avg_pool_everything<
                             res<res<res<res_down<
                             dlib::repeat<9,res, // repeat this layer 9 times
@@ -148,8 +147,7 @@ using net_type = dlib::loss_multiclass_log<//dlib::fc<max_class_count,
                             >>>>>>>>>>;
 
 // Replace batch normalization layers with affine layers.
-using runtime_net_type = dlib::loss_multiclass_log<//dlib::fc<max_class_count,
-                            dlib::con<max_class_count, 1, 1, 1, 1,
+using runtime_net_type = dlib::loss_multiclass_log<dlib::fc<max_class_count,
                             dlib::avg_pool_everything<
                             ares<ares<ares<ares_down<
                             dlib::repeat<9,ares,
