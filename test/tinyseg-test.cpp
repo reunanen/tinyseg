@@ -38,7 +38,7 @@ void test()
     tinyseg::net_type net;
 
     const size_t minibatch_size = 2000;
-    const double initial_learning_rate = 0.1;
+    const double initial_learning_rate = 1e-5;
     const double weight_decay = 0.0005;
     const double momentum = 0.9;
 
@@ -47,15 +47,16 @@ void test()
     trainer.be_verbose();
     trainer.set_learning_rate(initial_learning_rate);
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
-    trainer.set_iterations_without_progress_threshold(100);
+    trainer.set_iterations_without_progress_threshold(10);
     trainer.set_learning_rate_shrink_factor(0.1);
 
     tinyseg::training_dataset minibatch;
 
     std::cout << "Training:" << std::endl;
 
-    while (trainer.get_learning_rate() >= 1e-6) {
+    while (trainer.get_learning_rate() >= 1e-5) {
 
+#if 0
         minibatch.inputs.clear();
         minibatch.labels.clear();
 
@@ -66,6 +67,9 @@ void test()
         }
 
         trainer.train_one_step(minibatch.inputs, minibatch.labels);
+#endif
+        trainer.train(full_dataset.inputs, full_dataset.labels);
+
     }
 
     trainer.get_net();
@@ -95,16 +99,19 @@ void test()
 
         cv::Mat result(input_image.size(), CV_8UC3);
 
-        auto test_inputs = convert_to_dlib_inputs(input_image, roi, create_training_dataset_params);
+        auto test_input = convert_to_dlib_input(input_image, roi, create_training_dataset_params);
 
-        const std::vector<tinyseg::label_t> predicted_labels = runtime_net(test_inputs);
+        assert(test_input.nr() == input_image.rows);
+        assert(test_input.nc() == input_image.cols);
 
-        assert(test_inputs.size() == input_image.size().area());
+        const dlib::matrix<tinyseg::label_t> predicted_labels = runtime_net(test_input);
 
-        size_t i = 0;
+        assert(test_input.nr() == predicted_labels.nr());
+        assert(test_input.nc() == predicted_labels.nc());
+
         for (int y = 0; y < input_image.rows; ++y) {
-            for (int x = 0; x < input_image.cols; ++x, ++i) {
-                const tinyseg::label_t label = predicted_labels[i];
+            for (int x = 0; x < input_image.cols; ++x) {
+                const tinyseg::label_t label = predicted_labels(y, x);
                 const auto& label_color = label_colors[label];
                 result.at<cv::Vec3b>(y, x) = cv::Vec3b(
                     static_cast<unsigned char>(label_color[0]),

@@ -17,7 +17,7 @@ void training_dataset::shuffle() {
     std::shuffle(new_order.begin(), new_order.end(), std::mt19937{ std::random_device{}() });
 
     std::vector<image_t> new_inputs(inputs.size());
-    std::vector<label_t> new_labels(labels.size());
+    std::vector<label_matrix_t> new_labels(labels.size());
 
     for (size_t i = 0, end = inputs.size(); i < end; ++i) {
         new_inputs[i] = inputs[new_order[i]];
@@ -66,125 +66,34 @@ sample load_image(const std::string& original_image_filename, const std::string&
     }
 
     sample.labels.create(image_size, label_image_type);
-    sample.labels.setTo(std::numeric_limits<label_image_t>::max());
-
-    std::vector<cv::Point> mask;
+    sample.labels.setTo(dlib::label_to_ignore);
 
     cv::Mat label_mask;
     for (label_image_t label = 0, label_count = static_cast<label_image_t>(label_colors.size()); label < label_count; ++label) {
         const cv::Scalar& label_color = label_colors[label];
         cv::inRange(labels_mask, label_color, label_color, label_mask);
         sample.labels.setTo(label, label_mask);
-
-        mask.clear();
-        cv::findNonZero(label_mask, mask);
-        std::move(mask.begin(), mask.end(), std::back_inserter(sample.mask));
     }
 
     return sample;
 }
 
-cv::Mat make_border(const cv::Mat& original_image, const create_training_dataset_params& params) {
-    if (original_image.data == nullptr) {
-        throw std::runtime_error("make_border: original_image is empty");
+cv::Mat make_border(const cv::Mat& input, const create_training_dataset_params& params) {
+    if (input.data == nullptr) {
+        throw std::runtime_error("make_border: image is empty");
     }
-    cv::Mat original_image_with_borders;
-    const size_t input_image_size_half = input_image_size / 2;
-    cv::copyMakeBorder(original_image, original_image_with_borders,
-        input_image_size_half, input_image_size_half,
-        input_image_size_half, input_image_size_half,
+    cv::Mat output;
+    cv::copyMakeBorder(input, output,
+        border_required, border_required,
+        border_required, border_required,
         params.border_type, params.border_value);
-    return original_image_with_borders;
+    return output;
 }
 
-void to_dlib_matrix(const cv::Mat_<uint8_t>& input, image_t& output)
-{
-    assert(input.rows == output.nr());
-    assert(input.cols == output.nc());
-    assert(input.type() == CV_8UC1);
+image_t convert_to_dlib_input(const cv::Mat& original_image, const cv::Mat& roi, const create_training_dataset_params& params) {
+    image_t result(original_image.rows, original_image.cols);
 
-    for (int y = 0; y < input.rows; ++y) {
-        const uint8_t* input_row = input.ptr(y);
-        for (int x = 0; x < input.cols; ++x) {
-            const uint8_t value = input_row[x];
-            //output(y, x) = dlib::rgb_pixel(value, value, value);
-            output(y, x) = value;
-        }
-    }
-}
-
-#if 0
-template <typename InputIterator>
-training_dataset create_training_dataset(InputIterator begin, InputIterator end, const create_training_dataset_params& params = create_training_dataset_params()) {
-    training_dataset dataset;
-
-    const size_t initial_capacity = 16 * 1024 * 1024;
-    dataset.inputs.reserve(initial_capacity);
-    dataset.labels.reserve(initial_capacity);
-
-#ifdef _DEBUG
-    size_t sample_index = 0;
-#endif // _DEBUG
-
-    for (InputIterator i = begin; i != end; ++i) {
-        const sample& sample = *i;
-
-        const cv::Mat original_image_with_borders = make_border(sample.original_image, params);
-
-        image_t input(input_image_size, input_image_size); // , weights;
-
-        for (const auto& point : sample.mask) {
-
-#ifdef _DEBUG
-            if (sample_index++ % 100 != 0) {
-                continue;
-            }
-#endif // _DEBUG
-
-            cv::Rect source_rect(point.x, point.y, input_image_size, input_image_size);
-            cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
-
-            to_dlib_matrix(input_window, input);
-
-            label_t label = sample.labels.at<label_image_t>(point);
-
-            dataset.inputs.push_back(input);
-            dataset.labels.push_back(label);
-        }
-    }
-
-    return dataset;
-}
-#endif
-
-std::vector<image_t> convert_to_dlib_inputs(const cv::Mat& original_image, const cv::Mat& roi, const create_training_dataset_params& params) {
-    std::vector<cv::Point> nz;
-    if (roi.data == nullptr) { // no ROI given
-        nz.reserve(original_image.size().area());
-        for (int y = 0; y < original_image.rows; ++y) {
-            for (int x = 0; x < original_image.cols; ++x) {
-                nz.push_back(cv::Point(x, y));
-            }
-        }
-    }
-    else {
-        cv::findNonZero(roi, nz);
-    }
-
-    const cv::Mat original_image_with_borders = make_border(original_image, params);
-
-    std::vector<image_t> result;
-    result.reserve(nz.size());
-
-    image_t input(input_image_size, input_image_size);
-
-    for (const auto& point : nz) {
-        cv::Rect source_rect(point.x, point.y, input_image_size, input_image_size);
-        const cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
-
-        to_dlib_matrix(input_window, input);
-        result.push_back(input);
-    }
+    to_dlib_matrix(cv::Mat_<uint8_t>(original_image), result);
 
     return result;
 }

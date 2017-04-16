@@ -2,46 +2,9 @@
 
 namespace tinyseg {
 
-constexpr size_t input_image_size = 28;
+constexpr int border_required = 0;
+
 constexpr unsigned long max_class_count = 10;
-
-#if 0
-
-// from: http://dlib.net/dnn_introduction_ex.cpp.html
-
-// Now let's define the LeNet.  Broadly speaking, there are 3 parts to a network
-// definition.  The loss layer, a bunch of computational layers, and then an input
-// layer.  You can see these components in the network definition below.  
-// 
-// The input layer here says the network expects to be given matrix<unsigned char>
-// objects as input.  In general, you can use any dlib image or matrix type here, or
-// even define your own types by creating custom input layers.
-//
-// Then the middle layers define the computation the network will do to transform the
-// input into whatever we want.  Here we run the image through multiple convolutions,
-// ReLU units, max pooling operations, and then finally a fully connected layer that
-// converts the whole thing into just 10 numbers.  
-// 
-// Finally, the loss layer defines the relationship between the network outputs, our 10
-// numbers, and the labels in our dataset.  Since we selected loss_multiclass_log it
-// means we want to do multiclass classification with our network.   Moreover, the
-// number of network outputs (i.e. 10) is the number of possible labels.  Whichever
-// network output is largest is the predicted label.  So for example, if the first
-// network output is largest then the predicted digit is 0, if the last network output
-// is largest then the predicted digit is 9.  
-using net_type = dlib::loss_multiclass_log<
-    dlib::fc<max_class_count,
-    dlib::relu<dlib::fc<84,
-    dlib::relu<dlib::fc<120,
-    dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<16, 5, 5, 1, 1,
-    dlib::max_pool<2, 2, 2, 2, dlib::relu<dlib::con<6, 5, 5, 1, 1,
-    dlib::input<dlib::matrix<unsigned char>>
-    >>>>>>>>>>>>;
-#endif
-
-
-
-#if 1
 
 // Adapted from: http://dlib.net/dnn_introduction2_ex.cpp.html
 
@@ -137,26 +100,23 @@ template <typename SUBNET> using ares_down = dlib::relu<residual_down<block,8,dl
 // res<res<res<res<res<res<res<res<res<SUBNET>>>>>>>>>.  It will also prevent
 // the compiler from complaining about super deep template nesting when creating
 // large networks.
-using net_type = dlib::loss_multiclass_log<dlib::fc<max_class_count,
-                            dlib::avg_pool_everything<
-                            res<res<res<res_down<
+using net_type = dlib::loss_multiclass_log_matrixoutput<
+                            dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
+                            res<res</*res<res<
                             dlib::repeat<9,res, // repeat this layer 9 times
-                            res_down<
                             res<
+                            res<*/
                             dlib::input<dlib::matrix<unsigned char>>
-                            >>>>>>>>>>;
+                            /*>>>>>*/>>>>>;
 
 // Replace batch normalization layers with affine layers.
-using runtime_net_type = dlib::loss_multiclass_log<dlib::fc<max_class_count,
-                            dlib::avg_pool_everything<
-                            ares<ares<ares<ares_down<
+using runtime_net_type = dlib::loss_multiclass_log_matrixoutput<
+                            dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
+                            ares<ares</*ares<ares<
                             dlib::repeat<9,ares,
-                            ares_down<
                             ares<
+                            ares<*/
                             dlib::input<dlib::matrix<unsigned char>>
-                            >>>>>>>>>>;
-
-// ----------------------------------------------------------------------------------------
-#endif
+                            /*>>>>>*/>>>>>;
 
 }

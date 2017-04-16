@@ -6,13 +6,14 @@ namespace tinyseg {
 typedef unsigned short label_image_t;
 const int label_image_type = CV_16UC1;
 
-typedef unsigned long label_t;
+typedef dlib::matrixoutput_label_t label_t;
 
 typedef dlib::matrix<unsigned char> image_t;
+typedef dlib::matrix<label_t> label_matrix_t;
 
 struct training_dataset {
     std::vector<image_t> inputs;
-    std::vector<label_t> labels;
+    std::vector<label_matrix_t> labels;
     //std::vector<tiny_dnn::vec_t> weights;
 
     void shuffle();
@@ -23,7 +24,6 @@ struct training_dataset {
 struct sample {
     cv::Mat original_image;
     cv::Mat labels;
-    std::vector<cv::Point> mask; // where are the labels valid?
 };
 
 sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors);
@@ -33,15 +33,29 @@ struct create_training_dataset_params {
     cv::Scalar border_value = cv::Scalar();
 };
 
-cv::Mat make_border(const cv::Mat& original_image, const create_training_dataset_params& params);
+cv::Mat make_border(const cv::Mat& input, const create_training_dataset_params& params);
 
-void to_dlib_matrix(const cv::Mat_<uint8_t>& input, image_t& output);
+template <typename OpenCvPixelType, typename DLibPixelType>
+void to_dlib_matrix(const cv::Mat_<OpenCvPixelType>& input, dlib::matrix<DLibPixelType>& output)
+{
+    assert(input.rows == output.nr());
+    assert(input.cols == output.nc());
+
+    for (int y = 0; y < input.rows; ++y) {
+        const OpenCvPixelType* input_row = input.ptr<OpenCvPixelType>(y);
+        for (int x = 0; x < input.cols; ++x) {
+            const OpenCvPixelType value = input_row[x];
+            //output(y, x) = dlib::rgb_pixel(value, value, value);
+            output(y, x) = value;
+        }
+    }
+}
 
 template <typename InputIterator>
 training_dataset create_training_dataset(InputIterator begin, InputIterator end, const create_training_dataset_params& params = create_training_dataset_params()) {
     training_dataset dataset;
 
-    const size_t initial_capacity = 16 * 1024 * 1024;
+    const size_t initial_capacity = end - begin;
     dataset.inputs.reserve(initial_capacity);
     dataset.labels.reserve(initial_capacity);
 
@@ -49,31 +63,27 @@ training_dataset create_training_dataset(InputIterator begin, InputIterator end,
     size_t sample_index = 0;
 #endif // _DEBUG
 
+    cv::Mat scaled_image(200, 200, begin->original_image.type());
+    cv::Mat scaled_labels(200, 200, begin->labels.type());
+
+    cv::Mat scaled_image_with_border;
+
     for (InputIterator i = begin; i != end; ++i) {
         const sample& sample = *i;
 
-        const cv::Mat original_image_with_borders = make_border(sample.original_image, params);
+        cv::resize(sample.original_image, scaled_image, scaled_image.size(), 0.0, 0.0, cv::INTER_LINEAR);
+        cv::resize(sample.labels, scaled_labels, scaled_labels.size(), 0.0, 0.0, cv::INTER_NEAREST);
 
-        image_t input(input_image_size, input_image_size); // , weights;
+        scaled_image_with_border = make_border(scaled_image, params);
 
-        for (const auto& point : sample.mask) {
+        image_t input(scaled_image_with_border.rows, scaled_image_with_border.cols); // , weights;
+        to_dlib_matrix(cv::Mat_<uint8_t>(scaled_image_with_border), input);
 
-#ifdef _DEBUG
-            if (sample_index++ % 1000 != 0) {
-                continue;
-            }
-#endif // _DEBUG
+        label_matrix_t labels(scaled_labels.rows, scaled_labels.cols);
+        to_dlib_matrix(cv::Mat_<label_image_t>(scaled_labels), labels);
 
-            cv::Rect source_rect(point.x, point.y, input_image_size, input_image_size);
-            cv::Mat_<uint8_t> input_window = original_image_with_borders(source_rect);
-
-            to_dlib_matrix(input_window, input);
-
-            label_t label = sample.labels.at<label_image_t>(point);
-
-            dataset.inputs.push_back(input);
-            dataset.labels.push_back(label);
-        }
+        dataset.inputs.push_back(input);
+        dataset.labels.push_back(labels);
     }
 
     return dataset;
@@ -83,6 +93,6 @@ struct runtime_params {
     // TODO: sampling density, etc
 };
 
-std::vector<image_t> convert_to_dlib_inputs(const cv::Mat& original_image, const cv::Mat& roi = cv::Mat(), const create_training_dataset_params& params = create_training_dataset_params());
+image_t convert_to_dlib_input(const cv::Mat& original_image, const cv::Mat& roi = cv::Mat(), const create_training_dataset_params& params = create_training_dataset_params());
 
 }
