@@ -54,7 +54,9 @@ void test()
 
     std::cout << "Training:" << std::endl;
 
-    while (trainer.get_learning_rate() >= 0.01) {
+    unsigned long epoch = 0;
+
+    while (trainer.get_learning_rate() >= 0.01 && epoch++ < trainer.get_max_num_epochs()) {
 
 #if 0
         minibatch.inputs.clear();
