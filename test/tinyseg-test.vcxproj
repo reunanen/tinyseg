@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="DebugCUDA|Win32">
-      <Configuration>DebugCUDA</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="DebugCUDA|x64">
-      <Configuration>DebugCUDA</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="DebugMKL|Win32">
       <Configuration>DebugMKL</Configuration>
       <Platform>Win32</Platform>
@@ -23,14 +15,6 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseCUDA|Win32">
-      <Configuration>ReleaseCUDA</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseCUDA|x64">
-      <Configuration>ReleaseCUDA</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="ReleaseMKL|Win32">
@@ -64,13 +48,6 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>No</UseIntelMKL>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>No</UseIntelMKL>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -85,13 +62,6 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>No</UseIntelMKL>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>No</UseIntelMKL>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -100,14 +70,6 @@
     <UseIntelMKL>Parallel</UseIntelMKL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>No</UseIntelMKL>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -131,14 +93,6 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>No</UseIntelMKL>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>No</UseIntelMKL>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -149,12 +103,8 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'" Label="PropertySheets">
@@ -163,25 +113,16 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'" Label="PropertySheets">
@@ -192,13 +133,6 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\$(Platform);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -214,11 +148,6 @@
     <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\$(Platform);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -228,13 +157,6 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\$(Platform);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -249,11 +171,6 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../dlib;../tiny-dnn;../opencv-binaries-vs/include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>../opencv-binaries-vs/$(Platform)/lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\$(Platform);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -279,32 +196,6 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320d.dll $(Out
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDir)
 </Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;DLIB_USE_CUDA;DLIB_HAVE_SSE2;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cudart_static.lib;cublas.lib;cublas_device.lib;cudnn.lib;curand.lib;cusolver.lib;opencv_core320d.lib;opencv_imgcodecs320d.lib;opencv_imgproc320d.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_core320d.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320d.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDir)
-</Command>
-    </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">
     <ClCompile>
@@ -326,9 +217,6 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDi
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\ia32_win\compiler\libiomp5md.dll" $(OutDir)
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\ia32_win\mkl\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -347,30 +235,6 @@ xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320d.dll $(OutDir)
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|x64'">
-    <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;DLIB_USE_CUDA;DLIB_HAVE_SSE2;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cudart_static.lib;cublas.lib;cublas_device.lib;cudnn.lib;curand.lib;cusolver.lib;opencv_core320d.lib;opencv_imgcodecs320d.lib;opencv_imgproc320d.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_core320d.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320d.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDir)</Command>
-    </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">
     <ClCompile>
@@ -391,9 +255,6 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320d.dll $(OutDi
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\intel64_win\compiler\libiomp5md.dll" $(OutDir)
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\intel64_win\mkl\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -418,36 +279,6 @@ xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320.dll $(OutDir)
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;DLIB_USE_CUDA;DLIB_HAVE_SSE2;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>cudart_static.lib;cublas.lib;cublas_device.lib;cudnn.lib;curand.lib;cusolver.lib;opencv_core320.lib;opencv_imgcodecs320.lib;opencv_imgproc320.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_core320.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir)</Command>
-    </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">
     <ClCompile>
@@ -474,9 +305,6 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\ia32_win\compiler\libiomp5md.dll" $(OutDir)
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\ia32_win\mkl\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -501,36 +329,6 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320.dll $(OutD
 xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir)
 </Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;DLIB_USE_CUDA;DLIB_HAVE_SSE2;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>cudart_static.lib;cublas.lib;cublas_device.lib;cudnn.lib;curand.lib;cusolver.lib;opencv_core320.lib;opencv_imgcodecs320.lib;opencv_imgproc320.lib</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_core320.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgcodecs320.dll $(OutDir)
-xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir)
-</Command>
-    </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">
     <ClCompile>
@@ -556,62 +354,9 @@ xcopy /y /q ..\opencv-binaries-vs\$(Platform)\bin\opencv_imgproc320.dll $(OutDir
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\intel64_win\compiler\libiomp5md.dll" $(OutDir)
 xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.187\windows\redist\intel64_win\mkl\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
-    <CudaCompile>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\dlib\dlib\dnn\cpu_dlib.cpp" />
-    <ClCompile Include="..\dlib\dlib\dnn\cublas_dlibapi.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\dlib\dlib\dnn\cuda_data_ptr.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\dlib\dlib\dnn\cudnn_dlibapi.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\dlib\dlib\dnn\curand_dlibapi.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\dlib\dlib\dnn\gpu_data.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\dlib\dlib\dnn\tensor_tools.cpp" />
     <ClCompile Include="..\dlib\dlib\threads\threaded_object_extension.cpp" />
     <ClCompile Include="..\dlib\dlib\threads\threads_kernel_1.cpp" />
@@ -620,16 +365,12 @@ xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.
     <ClCompile Include="..\tinyseg.cpp" />
     <ClCompile Include="tinyseg-test.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='DebugCUDA|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='ReleaseCUDA|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemGroup>
@@ -637,32 +378,7 @@ xcopy /y /q "C:\Program Files (x86)\IntelSWTools\compilers_and_libraries_2017.2.
     <ClInclude Include="..\tinyseg-net-structure.hpp" />
     <ClInclude Include="..\tinyseg.hpp" />
   </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="..\dlib\dlib\dnn\cuda_dlib.cu">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </CudaCompile>
-    <CudaCompile Include="..\dlib\dlib\dnn\cusolver_dlibapi.cu">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugMKL|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseMKL|x64'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </CudaCompile>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.targets" />
   </ImportGroup>
 </Project>
