@@ -47,7 +47,7 @@ void test()
     trainer.be_verbose();
     trainer.set_learning_rate(initial_learning_rate);
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
-    trainer.set_iterations_without_progress_threshold(10);
+    trainer.set_iterations_without_progress_threshold(100);
     trainer.set_learning_rate_shrink_factor(0.1);
 
     tinyseg::training_dataset minibatch;

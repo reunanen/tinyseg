@@ -102,21 +102,21 @@ template <typename SUBNET> using ares_down = dlib::relu<residual_down<block,8,dl
 // large networks.
 using net_type = dlib::loss_multiclass_log_matrixoutput<
                             dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
-                            res<res</*res<res<
+                            res<res<res<res</*
                             dlib::repeat<9,res, // repeat this layer 9 times
                             res<
                             res<*/
                             dlib::input<dlib::matrix<unsigned char>>
-                            /*>>>>>*/>>>>>;
+                            /*>>>*/>>>>>>>;
 
 // Replace batch normalization layers with affine layers.
 using runtime_net_type = dlib::loss_multiclass_log_matrixoutput<
                             dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
-                            ares<ares</*ares<ares<
+                            ares<ares<ares<ares</*
                             dlib::repeat<9,ares,
                             ares<
                             ares<*/
                             dlib::input<dlib::matrix<unsigned char>>
-                            /*>>>>>*/>>>>>;
+                            /*>>>*/>>>>>>>;
 
 }
