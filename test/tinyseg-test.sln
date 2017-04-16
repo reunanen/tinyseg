@@ -9,10 +9,14 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		DebugCUDA|Win32 = DebugCUDA|Win32
+		DebugCUDA|x64 = DebugCUDA|x64
 		DebugMKL|Win32 = DebugMKL|Win32
 		DebugMKL|x64 = DebugMKL|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
+		ReleaseCUDA|Win32 = ReleaseCUDA|Win32
+		ReleaseCUDA|x64 = ReleaseCUDA|x64
 		ReleaseMKL|Win32 = ReleaseMKL|Win32
 		ReleaseMKL|x64 = ReleaseMKL|x64
 	EndGlobalSection
@@ -21,6 +25,10 @@ Global
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Debug|Win32.Build.0 = Debug|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Debug|x64.ActiveCfg = Debug|x64
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Debug|x64.Build.0 = Debug|x64
+		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugCUDA|Win32.ActiveCfg = DebugCUDA|Win32
+		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugCUDA|Win32.Build.0 = DebugCUDA|Win32
+		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugCUDA|x64.ActiveCfg = DebugCUDA|x64
+		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugCUDA|x64.Build.0 = DebugCUDA|x64
 		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugMKL|Win32.ActiveCfg = DebugMKL|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugMKL|Win32.Build.0 = DebugMKL|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.DebugMKL|x64.ActiveCfg = DebugMKL|x64
@@ -29,6 +37,10 @@ Global
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Release|Win32.Build.0 = Release|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Release|x64.ActiveCfg = Release|x64
 		{3413FB65-357D-439A-94A8-8C79125E4378}.Release|x64.Build.0 = Release|x64
+		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseCUDA|Win32.ActiveCfg = ReleaseCUDA|Win32
+		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseCUDA|Win32.Build.0 = ReleaseCUDA|Win32
+		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseCUDA|x64.ActiveCfg = ReleaseCUDA|x64
+		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseCUDA|x64.Build.0 = ReleaseCUDA|x64
 		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseMKL|Win32.ActiveCfg = ReleaseMKL|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseMKL|Win32.Build.0 = ReleaseMKL|Win32
 		{3413FB65-357D-439A-94A8-8C79125E4378}.ReleaseMKL|x64.ActiveCfg = ReleaseMKL|x64

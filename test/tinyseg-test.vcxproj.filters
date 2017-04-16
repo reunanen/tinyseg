@@ -23,6 +23,21 @@
       <Filter>tinyseg</Filter>
     </ClCompile>
     <ClCompile Include="tinyseg-test.cpp" />
+    <ClCompile Include="..\dlib\dlib\dnn\cublas_dlibapi.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\cuda_data_ptr.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\cudnn_dlibapi.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\curand_dlibapi.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dlib\dlib\dnn\gpu_data.cpp">
+      <Filter>tinyseg\dlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tinyseg.hpp">
@@ -39,5 +54,13 @@
     <Filter Include="tinyseg\dlib">
       <UniqueIdentifier>{559bdfaa-d7b5-4ead-b1f3-8cccb9f86089}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\dlib\dlib\dnn\cuda_dlib.cu">
+      <Filter>tinyseg\dlib</Filter>
+    </None>
+    <None Include="..\dlib\dlib\dnn\cusolver_dlibapi.cu">
+      <Filter>tinyseg\dlib</Filter>
+    </None>
   </ItemGroup>
 </Project>
