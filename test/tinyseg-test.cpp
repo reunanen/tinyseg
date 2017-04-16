@@ -40,16 +40,16 @@ void test()
     const size_t minibatch_size = 2000;
     const double initial_learning_rate = 0.1;
     const double weight_decay = 0.0005;
-    const double momentum = 0.9;
+    const double momentum = 0.0;
 
     dlib::dnn_trainer<tinyseg::net_type> trainer(net, dlib::sgd(weight_decay, momentum));
 
     trainer.be_verbose();
     trainer.set_learning_rate(initial_learning_rate);
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
-    trainer.set_iterations_without_progress_threshold(100);
-    trainer.set_learning_rate_shrink_factor(0.25);
-    trainer.set_max_num_epochs(100000);
+    trainer.set_iterations_without_progress_threshold(1000);
+    trainer.set_learning_rate_shrink_factor(0.1);
+    //trainer.set_max_num_epochs(1000);
 
     tinyseg::training_dataset minibatch;
 
