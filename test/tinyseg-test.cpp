@@ -38,7 +38,7 @@ void test()
     tinyseg::net_type net;
 
     const size_t minibatch_size = 2000;
-    const double initial_learning_rate = 1e-5;
+    const double initial_learning_rate = 0.1;
     const double weight_decay = 0.0005;
     const double momentum = 0.9;
 
@@ -54,7 +54,7 @@ void test()
 
     std::cout << "Training:" << std::endl;
 
-    while (trainer.get_learning_rate() >= 1e-5) {
+    while (trainer.get_learning_rate() >= 0.01) {
 
 #if 0
         minibatch.inputs.clear();
