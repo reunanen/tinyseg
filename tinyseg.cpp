@@ -2,6 +2,7 @@
 #include "tinyseg-net-structure.hpp"
 
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include <numeric> // std::iota
 #include <random>
@@ -91,9 +92,14 @@ cv::Mat make_border(const cv::Mat& input, const create_training_dataset_params& 
 }
 
 image_t convert_to_dlib_input(const cv::Mat& original_image, const cv::Mat& roi, const create_training_dataset_params& params) {
-    image_t result(original_image.rows, original_image.cols);
 
-    to_dlib_matrix(cv::Mat_<uint8_t>(original_image), result);
+    cv::Mat scaled_image(200, 200, original_image.type());
+
+    cv::resize(original_image, scaled_image, scaled_image.size(), 0.0, 0.0, cv::INTER_LINEAR);
+
+    image_t result(scaled_image.rows, scaled_image.cols);
+
+    to_dlib_matrix(cv::Mat_<uint8_t>(scaled_image), result);
 
     return result;
 }

@@ -48,8 +48,8 @@ void test()
     trainer.set_learning_rate(initial_learning_rate);
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
     trainer.set_iterations_without_progress_threshold(100);
-    trainer.set_learning_rate_shrink_factor(0.1);
-    trainer.set_max_num_epochs(3000);
+    trainer.set_learning_rate_shrink_factor(0.25);
+    trainer.set_max_num_epochs(100000);
 
     tinyseg::training_dataset minibatch;
 
@@ -100,8 +100,6 @@ void test()
             cv::imwrite(resized_input_filename.str(), input_image);
         }
 
-        cv::Mat result(input_image.size(), CV_8UC3);
-
         auto test_input = convert_to_dlib_input(input_image, roi, create_training_dataset_params);
 
         assert(test_input.nr() == input_image.rows);
@@ -112,8 +110,10 @@ void test()
         assert(test_input.nr() == predicted_labels.nr());
         assert(test_input.nc() == predicted_labels.nc());
 
-        for (int y = 0; y < input_image.rows; ++y) {
-            for (int x = 0; x < input_image.cols; ++x) {
+        cv::Mat result(predicted_labels.nr(), predicted_labels.nc(), CV_8UC3);
+
+        for (int y = 0; y < predicted_labels.nr(); ++y) {
+            for (int x = 0; x < predicted_labels.nc(); ++x) {
                 const tinyseg::label_t label = predicted_labels(y, x);
                 const auto& label_color = label_colors[label];
                 result.at<cv::Vec3b>(y, x) = cv::Vec3b(
@@ -123,6 +123,8 @@ void test()
                 );
             }
         }
+
+        cv::resize(result, result, input_image.size(), 0.0, 0.0, cv::INTER_NEAREST);
 
         cv::imwrite(output_filename.str(), result);
 
