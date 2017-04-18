@@ -6,7 +6,7 @@ namespace tinyseg {
 typedef unsigned short label_image_t;
 const int label_image_type = CV_16UC1;
 
-typedef dlib::matrixoutput_label_t label_t;
+typedef uint16_t label_t;
 
 typedef dlib::matrix<unsigned char> image_t;
 typedef dlib::matrix<label_t> label_matrix_t;
