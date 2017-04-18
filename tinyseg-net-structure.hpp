@@ -49,14 +49,14 @@ template <typename SUBNET> using ares      = dlib::relu<residual<block,8,dlib::a
 template <typename SUBNET> using res_down  = dlib::relu<residual_down<block,8,dlib::bn_con,SUBNET>>;
 template <typename SUBNET> using ares_down = dlib::relu<residual_down<block,8,dlib::affine,SUBNET>>;
 
-using net_type = dlib::loss_multiclass_log_matrixoutput<
+using net_type = dlib::loss_multiclass_log_per_pixel<
                             dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
                             res<res<res<res<
                             dlib::input<dlib::matrix<unsigned char>>
                             >>>>>>>;
 
 // Replace batch normalization layers with affine layers.
-using runtime_net_type = dlib::loss_multiclass_log_matrixoutput<
+using runtime_net_type = dlib::loss_multiclass_log_per_pixel<
                             dlib::bn_con<dlib::con<max_class_count, 1, 1, 1, 1,
                             ares<ares<ares<ares<
                             dlib::input<dlib::matrix<unsigned char>>
