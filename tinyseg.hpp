@@ -26,7 +26,13 @@ struct sample {
     cv::Mat labels;
 };
 
-sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors);
+sample load_image(
+    const std::string& original_image_filename,
+    const std::string& labels_filename,
+    const std::vector<cv::Scalar>& label_colors,
+    int original_image_read_flags = 0, // cv::IMREAD_GRAYSCALE
+    int label_image_read_flags = 1 // cv::IMREAD_COLOR
+); 
 
 struct create_training_dataset_params {
     int border_type = cv::BORDER_REFLECT;
