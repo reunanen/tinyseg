@@ -27,17 +27,9 @@ void test()
 
     std::cout << samples.size() << " images read" << std::endl;
 
-    std::cout << "Creating the training dataset: ";
-
-    tinyseg::create_training_dataset_params create_training_dataset_params;
-
-    auto& full_dataset = tinyseg::create_training_dataset(samples.begin(), samples.end(), create_training_dataset_params);
-
-    std::cout << full_dataset.inputs.size() << " samples created" << std::endl;
-
     tinyseg::net_type net;
 
-    const size_t minibatch_size = 2000;
+    const size_t minibatch_size = 50;
     const double initial_learning_rate = 0.1;
     const double weight_decay = 0.0005;
     const double momentum = 0.0;
@@ -49,29 +41,47 @@ void test()
     //trainer.set_synchronization_file("tinyseg-test-state.dat", std::chrono::minutes(10));
     trainer.set_iterations_without_progress_threshold(1000);
     trainer.set_learning_rate_shrink_factor(0.1);
-    //trainer.set_max_num_epochs(1000);
+    trainer.set_max_num_epochs(10000);
 
     tinyseg::training_dataset minibatch;
 
     std::cout << "Training:" << std::endl;
 
+    const int input_tile_width = 150;
+    const int input_tile_height = 150;
+
+    minibatch.inputs.resize(minibatch_size);
+    minibatch.labels.resize(minibatch_size);
+
+    for (size_t i = 0; i < minibatch_size; ++i) {
+        minibatch.inputs[i].set_size(input_tile_height, input_tile_width);
+        minibatch.labels[i].set_size(input_tile_height, input_tile_width);
+    }
+
     unsigned long epoch = 0;
 
-    while (trainer.get_learning_rate() >= 0.01 && epoch++ < trainer.get_max_num_epochs()) {
-
-#if 0
-        minibatch.inputs.clear();
-        minibatch.labels.clear();
+    while (epoch++ < trainer.get_max_num_epochs()) {
 
         for (size_t i = 0; i < minibatch_size; ++i) {
-            size_t index = rand() % full_dataset.inputs.size();
-            minibatch.inputs.push_back(full_dataset.inputs[index]);
-            minibatch.labels.push_back(full_dataset.labels[index]);
+            size_t index = rand() % samples.size();
+
+            const tinyseg::sample& sample = samples[index];
+
+            assert(sample.original_image.rows >= input_tile_height);
+            assert(sample.original_image.cols >= input_tile_width);
+            assert(sample.labels.rows >= input_tile_height);
+            assert(sample.labels.cols >= input_tile_width);
+
+            const int x0 = static_cast<size_t>(sample.original_image.cols - input_tile_width) * static_cast<size_t>(rand()) / static_cast<size_t>(RAND_MAX);
+            const int y0 = static_cast<size_t>(sample.original_image.rows - input_tile_height) * static_cast<size_t>(rand()) / static_cast<size_t>(RAND_MAX);
+
+            cv::Rect rect(x0, y0, input_tile_width, input_tile_height);
+
+            tinyseg::to_dlib_matrix(cv::Mat_<cv::Vec3b>(sample.original_image(rect)), minibatch.inputs[i]);
+            tinyseg::to_dlib_matrix(cv::Mat_<tinyseg::label_t>(sample.labels(rect)), minibatch.labels[i]);
         }
 
         trainer.train_one_step(minibatch.inputs, minibatch.labels);
-#endif
-        trainer.train(full_dataset.inputs, full_dataset.labels);
 
     }
 
@@ -90,7 +100,7 @@ void test()
 
         cv::Mat roi; // no ROI
 
-        cv::Mat input_image = cv::imread(input_filename.str(), cv::IMREAD_GRAYSCALE);
+        cv::Mat input_image = cv::imread(input_filename.str(), cv::IMREAD_COLOR);
         while (input_image.size().area() > 512 * 512) {
             const double resize_factor = 1.0 / sqrt(2.0);
             cv::resize(input_image, input_image, cv::Size(), resize_factor, resize_factor);
@@ -100,7 +110,8 @@ void test()
             cv::imwrite(resized_input_filename.str(), input_image);
         }
 
-        auto test_input = convert_to_dlib_input(input_image, roi, create_training_dataset_params);
+        tinyseg::image_t test_input(input_image.rows, input_image.cols);
+        tinyseg::to_dlib_matrix(cv::Mat_<cv::Vec3b>(input_image), test_input);
 
         assert(test_input.nr() == input_image.rows);
         assert(test_input.nc() == input_image.cols);

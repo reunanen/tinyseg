@@ -9,6 +9,7 @@
 
 namespace tinyseg {
 
+#if 0
 void training_dataset::shuffle() {
     if (!is_valid()) {
         throw std::runtime_error("Training dataset is not valid");
@@ -44,6 +45,7 @@ std::pair<training_dataset, training_dataset> training_dataset::split(double fir
 bool training_dataset::is_valid() {
     return inputs.size() == labels.size();
 }
+#endif
 
 sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors, int original_image_read_flags, int label_image_read_flags) {
     sample sample;
@@ -79,6 +81,7 @@ sample load_image(const std::string& original_image_filename, const std::string&
     return sample;
 }
 
+#if 0
 cv::Mat make_border(const cv::Mat& input, const create_training_dataset_params& params) {
     if (input.data == nullptr) {
         throw std::runtime_error("make_border: image is empty");
@@ -90,18 +93,6 @@ cv::Mat make_border(const cv::Mat& input, const create_training_dataset_params& 
         params.border_type, params.border_value);
     return output;
 }
-
-image_t convert_to_dlib_input(const cv::Mat& original_image, const cv::Mat& roi, const create_training_dataset_params& params) {
-
-    cv::Mat scaled_image(200, 200, original_image.type());
-
-    cv::resize(original_image, scaled_image, scaled_image.size(), 0.0, 0.0, cv::INTER_LINEAR);
-
-    image_t result(scaled_image.rows, scaled_image.cols);
-
-    to_dlib_matrix(cv::Mat_<uint8_t>(scaled_image), result);
-
-    return result;
-}
+#endif
 
 }
