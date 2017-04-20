@@ -45,16 +45,16 @@ bool training_dataset::is_valid() {
     return inputs.size() == labels.size();
 }
 
-sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors) {
+sample load_image(const std::string& original_image_filename, const std::string& labels_filename, const std::vector<cv::Scalar>& label_colors, int original_image_read_flags, int label_image_read_flags) {
     sample sample;
 
-    sample.original_image = cv::imread(original_image_filename, cv::IMREAD_GRAYSCALE);
+    sample.original_image = cv::imread(original_image_filename, original_image_read_flags);
 
     if (sample.original_image.data == nullptr) {
         throw std::runtime_error("Unable to read original image file");
     }
 
-    const cv::Mat labels_mask = cv::imread(labels_filename);
+    const cv::Mat labels_mask = cv::imread(labels_filename, label_image_read_flags);
 
     if (labels_mask.data == nullptr) {
         throw std::runtime_error("Unable to read labels image file");
